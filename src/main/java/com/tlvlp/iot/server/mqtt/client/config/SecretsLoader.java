@@ -39,6 +39,8 @@ public class SecretsLoader implements EnvironmentPostProcessor {
         Map<String, Object> secrets = getSecrets(secretFileNames, secretsFolder);
         environment.getPropertySources()
                 .addAfter(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, new MapPropertySource("secrets", secrets));
+        System.out.println("Secret strings are now available at the following environment variables:");
+        secrets.keySet().forEach(key -> System.out.printf("    %s%n", key));
     }
 
     private String findFolderVar(Map<String, Object> allEnvVariables) {
