@@ -20,13 +20,16 @@ public class Properties {
     @Value("${MQTT_CLIENT_MQTT_BROKER_USER}")
     public String MQTT_CLIENT_MQTT_BROKER_USER;
 
-    @Value("${MCU_MQTT_TOPIC_CHECKIN}")
-    public String MCU_MQTT_TOPIC_CHECKIN;
-
-    @Value("${MCU_MQTT_TOPIC_CHECKOUT}")
-    public String MCU_MQTT_TOPIC_CHECKOUT;
-
     @Value("${MQTT_CLIENT_MQTT_BROKER_PASS_SECRET_FILE_PARSED}")
     public String MQTT_CLIENT_MQTT_BROKER_PASS_SECRET_FILE_PARSED;
+
+    @Value("${MCU_MQTT_TOPIC_GLOBAL_STATUS}")
+    public String MCU_MQTT_TOPIC_GLOBAL_STATUS;
+
+    @Value("${MCU_MQTT_TOPIC_GLOBAL_INACTIVE}")
+    public String MCU_MQTT_TOPIC_GLOBAL_INACTIVE;
+
+    @Value("${UNITS_MESSAGE_RESOURCE_URI}")
+    public String UNITS_MESSAGE_RESOURCE_URI;
 
 }
