@@ -9,9 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.net.ssl.SSLContext;
-import java.security.NoSuchAlgorithmException;
-
 @Component
 public class BrokerConnector {
 
@@ -30,12 +27,25 @@ public class BrokerConnector {
         connectOptions.setUserName(properties.MQTT_CLIENT_MQTT_BROKER_USER);
         connectOptions.setPassword(properties.MQTT_CLIENT_MQTT_BROKER_PASS_SECRET_FILE_PARSED.toCharArray());
         connectOptions.setAutomaticReconnect(true);
-        try {
-            connectOptions.setSocketFactory(SSLContext.getDefault().getSocketFactory());
-        } catch (NoSuchAlgorithmException e) {
-            log.error("Critical Error! Unable to configure the MQTT Client: ", e);
-            System.exit(1);
-        }
+        connectOptions.setConnectionTimeout(30);
+        connectOptions.setKeepAliveInterval(30);
+        connectOptions.setCleanSession(true);
+//        try {
+//            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+//            sslContext.init(null, null, null);
+//            connectOptions.setSocketFactory(sslContext.getSocketFactory());
+//        } catch (NoSuchAlgorithmException e) {
+//            log.error("Critical Error! Unable to configure MQTT Client: ", e);
+//            System.exit(1);
+//        } catch (KeyManagementException e) {
+//            log.error("Critical Error! Unable to configure MQTT Client: ", e);
+//            System.exit(1);
+//        }
+        java.util.Properties props = new java.util.Properties();
+        props.setProperty("com.ibm.ssl.keyStore", "jksFilePath.jks");
+        props.setProperty("com.ibm.ssl.keyStorePassword", "jksPassword");
+        connectOptions.setSSLProperties(props);
+
 
     }
 
@@ -74,7 +84,10 @@ public class BrokerConnector {
     }
 
     private void attemptConnection() throws MqttException {
-        client.connect(connectOptions);
+        System.out.println("ATTEMPTING CONNECTION");
+        String result = client.connectWithResult(connectOptions).getException().getMessage();
+        System.out.println("CONNECTION ERROR: " + result);
+//        client.connect(connectOptions);
     }
 
 }
