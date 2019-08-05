@@ -30,49 +30,28 @@ public class BrokerConnector {
         connectOptions.setConnectionTimeout(30);
         connectOptions.setKeepAliveInterval(30);
         connectOptions.setCleanSession(true);
-//        try {
-//            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-//            sslContext.init(null, null, null);
-//            connectOptions.setSocketFactory(sslContext.getSocketFactory());
-//        } catch (NoSuchAlgorithmException e) {
-//            log.error("Critical Error! Unable to configure MQTT Client: ", e);
-//            System.exit(1);
-//        } catch (KeyManagementException e) {
-//            log.error("Critical Error! Unable to configure MQTT Client: ", e);
-//            System.exit(1);
-//        }
-        java.util.Properties props = new java.util.Properties();
-        props.setProperty("com.ibm.ssl.keyStore", "jksFilePath.jks");
-        props.setProperty("com.ibm.ssl.keyStorePassword", "jksPassword");
-        connectOptions.setSSLProperties(props);
-
-
     }
 
     //TODO - IS THE SCHEDULED CHECKER NECESSARY?
     @Scheduled(fixedDelayString = "${MQTT_CLIENT_CONNECTION_CHECK_MS}", initialDelay = 5000)
     public void checkConnection() {
-        if (!isConnectedToBroker() && !connectionInProgress) {
+        if (!client.isConnected() && !connectionInProgress) {
             log.warn("Connection lost to MQTT broker!");
             connectToBroker();
             //TODO - does it automatically resubscribe to topics?
         }
     }
 
-    public Boolean isConnectedToBroker() {
-        return client.isConnected();
-    }
-
     public void connectToBroker() {
         connectionInProgress = true;
         log.info("Attempting to connect to MQTT broker");
-        while (!isConnectedToBroker()) {
+        while (!client.isConnected()) {
             try {
-                attemptConnection();
+                client.connect(connectOptions);
                 connectionInProgress = false;
                 log.info("Connected to MQTT broker with client ID: " + properties.MQTT_CLIENT_MQTT_BROKER_USER);
             } catch (MqttException e) {
-                log.debug("Error connecting to MQTT broker: {}", e.getMessage());
+                log.debug("Error connecting to MQTT broker: ", e);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
@@ -80,14 +59,6 @@ public class BrokerConnector {
                 }
             }
         }
-
-    }
-
-    private void attemptConnection() throws MqttException {
-        System.out.println("ATTEMPTING CONNECTION");
-        String result = client.connectWithResult(connectOptions).getException().getMessage();
-        System.out.println("CONNECTION ERROR: " + result);
-//        client.connect(connectOptions);
     }
 
 }

@@ -11,8 +11,8 @@ public class Properties {
     @Value("${MQTT_BROKER_SERVICE_NAME}")
     public String MQTT_BROKER_SERVICE_NAME;
 
-    @Value("${MQTT_BROKER_PORT}")
-    public Integer MQTT_BROKER_PORT;
+    @Value("${MQTT_BROKER_PORT_INTERNAL}")
+    public Integer MQTT_BROKER_PORT_INTERNAL;
 
     @Value("${MQTT_CLIENT_DEFAULT_QOS}")
     public Integer MQTT_CLIENT_DEFAULT_QOS;
