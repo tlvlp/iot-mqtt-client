@@ -26,15 +26,15 @@ public class MessageForwarder {
             ResponseEntity response = restTemplate.postForEntity(
                     String.format("http://%s", properties.UNITS_MESSAGE_RESOURCE_URI),
                     message,
-                    ResponseEntity.class); //sponseEntity.class TODO?
-            if (response.getStatusCodeValue() == 202) { // If the response is 202 - Accepted
-                log.debug("Message forwarded to the Unit Service {}", message);
+                    ResponseEntity.class);
+            if (response.getStatusCodeValue() == 202) {
+                log.debug("Message (id: {}) forwarded to the Unit Service.", message.getTimeArrived());
             } else {
-                log.warn("Message could not be forwarded to Unit Service {} {}",
-                        response.getStatusCode(), response.getBody());
+                log.warn("Message (id: {}) could not be forwarded to Unit Service: {} {}",
+                        message.getTimeArrived(), response.getStatusCode(), response.getBody());
             }
         } catch (ResourceAccessException e) {
-            log.error("Warning! Unit Service is not responding:", e);
+            log.error("Error! Unit Service is not responding: {}", e.getMessage());
         }
     }
 

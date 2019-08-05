@@ -17,7 +17,6 @@ public class MessagingService {
     private static final Logger log = LoggerFactory.getLogger(MessagingService.class);
 
 //    private MqttClient client;
-
     private MessageDbService messageDbService;
     private MessageForwarder forwarder;
     private JsonParser jsonParser;
@@ -30,6 +29,42 @@ public class MessagingService {
         this.jsonParser = jsonParser;
         this.properties = properties;
     }
+
+    /**
+     * Handles incoming messages
+     * 1. Creates a new {@link Message} with the details from the incoming MQTT message
+     * 2. Saves the created message to the database
+     * 3. Forwards it to the processing service
+     *
+     * @param topic   - MQTT topic
+     * @param message - MQTT message
+     */
+    public void handleIncomingMessage(String topic, org.eclipse.paho.client.mqttv3.MqttMessage message) {
+        try {
+            Map<String, String> payloadMap =
+                    jsonParser.getObjectFromJson(new String(message.getPayload()), HashMap.class);
+            Message newMessage = new Message()
+                    .setTimeArrived(LocalDateTime.now())
+                    .setModule(payloadMap.get("module"))
+                    .setDirection(Message.Direction.INCOMING)
+                    .setTopic(topic)
+                    .setUnitID(payloadMap.get("unitID"))
+                    .setPayload(payloadMap);
+            if (isValidMessage(newMessage)) {
+                messageDbService.save(newMessage);
+                forwarder.forwardMessage(newMessage);
+            } else {
+                log.error("Error cannot save new MQTT message! Incomplete details: {}", newMessage);
+            }
+        } catch (IOException e) {
+            log.error("Error deserializing MQTT message", e);
+        }
+    }
+
+    private boolean isValidMessage(Message message) {
+        return message.getModule() != null && message.getUnitID() != null;
+    }
+
 //    /**
 //     * Sends a message to a selected topic
 //     */
@@ -61,8 +96,8 @@ public class MessagingService {
 //        String payload = jsonParser.getJsonFromObject(message.getPayload());
 //        client.publish(topic, new org.eclipse.paho.client.mqttv3.MqttMessage(payload.getBytes()));
 //        log.info("MQTT message sent to topic: {} with payload: {}", topic, payload);
-//    }
 
+//    }
 //    /**
 //     * Sends messages that were previously unsent due to MQTT broker outage
 //     */
@@ -86,8 +121,8 @@ public class MessagingService {
 //                }
 //            });
 //        }
-//    }
 
+//    }
 //    private List<MqttMessage> getLatestMessagePerUnit(List<MqttMessage> allMessage) {
 //        Set<String> unitSet = allMessage.stream()
 //                .map(MqttMessage::getUnitID)
@@ -101,35 +136,8 @@ public class MessagingService {
 //                    return latestMessage;
 //                })
 //                .collect(Collectors.toList());
-//    }
 
-    /**
-     * Handles incoming messages
-     * 1. Creates a new {@link Message} with the details from the incoming MQTT message
-     * 2. Saves the created message to the database
-     * 3. Forwards it to the processing service
-     *
-     * @param topic   - MQTT topic
-     * @param message - MQTT message
-     */
-    public void handleIncomingMessage(String topic, org.eclipse.paho.client.mqttv3.MqttMessage message) {
-        try {
-            // Create new message
-            Map<String, String> payloadMap =
-                    jsonParser.getObjectFromJson(new String(message.getPayload()), HashMap.class);
-            Message newMessage = new Message()
-                    .setTimeArrived(LocalDateTime.now())
-                    .setModule(payloadMap.get("module"))
-                    .setDirection(Message.Direction.INCOMING)
-                    .setTopic(topic)
-                    .setUnitID(payloadMap.get("unitID"))
-                    .setPayload(payloadMap);
-            messageDbService.save(newMessage);
-            forwarder.forwardMessage(newMessage);
-        } catch (IOException e) {
-            log.error("Error deserializing mqtt message", e);
-        }
-    }
+//    }
 
 }
 
