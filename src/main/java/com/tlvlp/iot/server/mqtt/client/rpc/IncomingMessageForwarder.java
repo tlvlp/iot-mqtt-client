@@ -10,13 +10,13 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class MessageForwarder {
+public class IncomingMessageForwarder {
 
-    private static final Logger log = LoggerFactory.getLogger(MessageForwarder.class);
+    private static final Logger log = LoggerFactory.getLogger(IncomingMessageForwarder.class);
     private RestTemplate restTemplate;
     private Properties properties;
 
-    public MessageForwarder(RestTemplate restTemplate, Properties properties) {
+    public IncomingMessageForwarder(RestTemplate restTemplate, Properties properties) {
         this.restTemplate = restTemplate;
         this.properties = properties;
     }
