@@ -8,11 +8,8 @@ public class Properties {
 
     // The service uses environment variables from the Docker container.
 
-    @Value("${MQTT_BROKER_SERVICE_NAME}")
-    public String MQTT_BROKER_SERVICE_NAME;
-
-    @Value("${MQTT_BROKER_PORT_INTERNAL}")
-    public Integer MQTT_BROKER_PORT_INTERNAL;
+    @Value("${MQTT_CLIENT_BROKER_URI}")
+    public String MQTT_CLIENT_BROKER_URI;
 
     @Value("${MQTT_CLIENT_DEFAULT_QOS}")
     public Integer MQTT_CLIENT_DEFAULT_QOS;
@@ -23,11 +20,8 @@ public class Properties {
     @Value("${MQTT_CLIENT_MQTT_BROKER_PASS_SECRET_FILE_PARSED}")
     public String MQTT_CLIENT_MQTT_BROKER_PASS_SECRET_FILE_PARSED;
 
-    @Value("${MCU_MQTT_TOPIC_GLOBAL_STATUS}")
-    public String MCU_MQTT_TOPIC_GLOBAL_STATUS;
-
-    @Value("${MCU_MQTT_TOPIC_GLOBAL_INACTIVE}")
-    public String MCU_MQTT_TOPIC_GLOBAL_INACTIVE;
+    @Value("${MQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV}")
+    public String MQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV;
 
     @Value("${UNITS_MESSAGE_RESOURCE_URI}")
     public String UNITS_MESSAGE_RESOURCE_URI;

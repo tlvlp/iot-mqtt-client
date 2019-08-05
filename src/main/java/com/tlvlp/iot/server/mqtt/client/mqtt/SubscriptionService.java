@@ -9,28 +9,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Service
 public class SubscriptionService {
     private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
 
-    private MessagingService messagingService;
-    private MqttClient client;
     private Properties properties;
+    private MqttClient client;
+    private MessagingService messagingService;
 
-    public SubscriptionService(MessagingService messagingService, MqttClient client, Properties properties) {
-        this.messagingService = messagingService;
-        this.client = client;
+    public SubscriptionService(Properties properties, MqttClient client, MessagingService messagingService) {
         this.properties = properties;
+        this.client = client;
+        this.messagingService = messagingService;
     }
 
     public void subscribeToTopics() {
-        List<String> topics = Arrays.asList(
-                properties.MCU_MQTT_TOPIC_GLOBAL_STATUS,
-                properties.MCU_MQTT_TOPIC_GLOBAL_INACTIVE);
-        topics.forEach(topic -> subscribe(topic, properties.MQTT_CLIENT_DEFAULT_QOS, getDefaultMqttMessageListener()));
+        String[] topics = properties.MQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV.split(",");
+        for (String topic : topics) {
+            subscribe(topic, properties.MQTT_CLIENT_DEFAULT_QOS, getDefaultMqttMessageListener());
+        }
     }
 
     private IMqttMessageListener getDefaultMqttMessageListener() {
@@ -42,7 +39,7 @@ public class SubscriptionService {
             client.subscribe(topic, qos, messageListener);
             log.info("MQTT broker subscription added for topic: {}", topic);
         } catch (MqttException e) {
-            log.error("Error adding subscription to MQTT broker for topic: {}", topic, e.getMessage());
+            log.error("Error adding subscription to MQTT broker for topic: {} \n{}", topic, e.getMessage());
         }
     }
 

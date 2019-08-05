@@ -20,7 +20,6 @@ public class StartupSequence {
     public void startup() {
         brokerConnector.connectToBroker();
         subscriptionService.subscribeToTopics();
-
     }
 
 }

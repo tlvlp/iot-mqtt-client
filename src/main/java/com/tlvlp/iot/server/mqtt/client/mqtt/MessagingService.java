@@ -105,11 +105,9 @@ public class MessagingService {
 
     /**
      * Handles incoming messages
-     * 1. Creates a new {@link Message} with the details from the incoming mqtt message
+     * 1. Creates a new {@link Message} with the details from the incoming MQTT message
      * 2. Saves the created message to the database
-     * 3. Notifies possible subscribers
-     * <p>
-     * Logs the error on failure
+     * 3. Forwards it to the processing service
      *
      * @param topic   - MQTT topic
      * @param message - MQTT message
@@ -117,8 +115,8 @@ public class MessagingService {
     public void handleIncomingMessage(String topic, org.eclipse.paho.client.mqttv3.MqttMessage message) {
         try {
             // Create new message
-            Map<String, String> payloadMap = jsonParser.getObjectFromJson(new String(message.getPayload()), HashMap.class);
-
+            Map<String, String> payloadMap =
+                    jsonParser.getObjectFromJson(new String(message.getPayload()), HashMap.class);
             Message newMessage = new Message()
                     .setTimeArrived(LocalDateTime.now())
                     .setModule(payloadMap.get("module"))
@@ -126,13 +124,8 @@ public class MessagingService {
                     .setTopic(topic)
                     .setUnitID(payloadMap.get("unitID"))
                     .setPayload(payloadMap);
-
-            // Save message
             messageDbService.save(newMessage);
-
-            // Send webhook notification to subscribers
             forwarder.forwardMessage(newMessage);
-
         } catch (IOException e) {
             log.error("Error deserializing mqtt message", e);
         }

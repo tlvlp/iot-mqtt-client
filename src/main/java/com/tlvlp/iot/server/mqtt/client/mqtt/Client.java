@@ -20,9 +20,7 @@ public class Client {
     @Bean
     public MqttClient getMqttClient() throws MqttException {
 
-        String brokerUri = String.format("tcp://%s:%s",
-                properties.MQTT_BROKER_SERVICE_NAME,
-                properties.MQTT_BROKER_PORT_INTERNAL);
+        String brokerUri = properties.MQTT_CLIENT_BROKER_URI;
 
         String randomizedClientID = String.format("%s_%s",
                 properties.MQTT_CLIENT_MQTT_BROKER_USER,

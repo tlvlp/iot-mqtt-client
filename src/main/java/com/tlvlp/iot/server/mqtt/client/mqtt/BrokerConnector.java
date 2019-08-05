@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 public class BrokerConnector {
 
     private static final Logger log = LoggerFactory.getLogger(BrokerConnector.class);
-    private MqttClient client;
     private Properties properties;
+    private MqttClient client;
     private MqttConnectOptions connectOptions;
     private Boolean connectionInProgress;
 
@@ -29,7 +29,7 @@ public class BrokerConnector {
         connectOptions.setAutomaticReconnect(true);
         connectOptions.setConnectionTimeout(30);
         connectOptions.setKeepAliveInterval(30);
-        connectOptions.setCleanSession(true);
+        connectOptions.setCleanSession(false);
     }
 
     //TODO - IS THE SCHEDULED CHECKER NECESSARY?
@@ -44,18 +44,18 @@ public class BrokerConnector {
 
     public void connectToBroker() {
         connectionInProgress = true;
-        log.info("Attempting to connect to MQTT broker");
+        log.info("Connecting to MQTT broker");
         while (!client.isConnected()) {
             try {
                 client.connect(connectOptions);
                 connectionInProgress = false;
-                log.info("Connected to MQTT broker with client ID: " + properties.MQTT_CLIENT_MQTT_BROKER_USER);
+                log.info("Connected to MQTT broker with client ID: " + client.getClientId());
             } catch (MqttException e) {
                 log.debug("Error connecting to MQTT broker: ", e);
                 try {
                     Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                } catch (InterruptedException ie) {
+                    log.warn("Sleep interrupted while waiting for MQTT broker connection. ", ie);
                 }
             }
         }
