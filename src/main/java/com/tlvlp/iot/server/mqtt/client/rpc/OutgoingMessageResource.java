@@ -18,7 +18,8 @@ public class OutgoingMessageResource {
         this.service = service;
     }
 
-    @PostMapping("${MQTT_CLIENT_MESSAGE_RESOURCE}")
+    //    @PostMapping("${MQTT_CLIENT_MESSAGE_RESOURCE}")
+    @PostMapping("/messages")
     public ResponseEntity postMessage(@RequestBody Message message) {
         try {
             service.handleOutgoingMessage(message);
@@ -29,5 +30,4 @@ public class OutgoingMessageResource {
             return new ResponseEntity(HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
-
 }

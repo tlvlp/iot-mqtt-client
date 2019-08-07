@@ -21,22 +21,4 @@ public class MessageDbService {
         log.info("Message saved: {}", savedMessage);
         return savedMessage;
     }
-
-
-    //TODO REMOVE UNUSED METHODS
-//    public List<Message> getMessagesByExample(Message exampleMessage) {
-//        ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues();
-//        Example<Message> exampleQuery = Example.of(exampleMessage, matcher);
-//        return repository.findAll(exampleQuery);
-//    }
-
-//    public void delete(Message message, @Nullable String reason) {
-//        repository.delete(message);
-//        log.info("Message deleted({}): {}", reason, message);
-//    }
-//
-//    public void delete(Collection<Message> messages, @Nullable String reason) {
-//        repository.deleteAll(messages);
-//        log.info("Messages deleted({}): {}", reason, messages);
-//    }
 }
