@@ -24,7 +24,7 @@ public class IncomingMessageForwarder {
     public void forwardMessage(Message message) {
         try {
             ResponseEntity response = restTemplate.postForEntity(
-                    String.format("http://%s", properties.UNITS_MESSAGE_RESOURCE_URI),
+                    String.format("http://%s", properties.UNIT_SERVICE_MESSAGE_RESOURCE_URI),
                     message,
                     ResponseEntity.class);
             if (response.getStatusCodeValue() == 202) {

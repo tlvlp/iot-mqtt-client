@@ -23,7 +23,7 @@ public class Properties {
     @Value("${MQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV}")
     public String MQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV;
 
-    @Value("${UNITS_MESSAGE_RESOURCE_URI}")
-    public String UNITS_MESSAGE_RESOURCE_URI;
+    @Value("${UNIT_SERVICE_MESSAGE_RESOURCE_URI}")
+    public String UNIT_SERVICE_MESSAGE_RESOURCE_URI;
 
 }
