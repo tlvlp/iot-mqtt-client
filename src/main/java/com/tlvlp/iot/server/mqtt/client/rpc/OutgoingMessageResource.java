@@ -18,14 +18,13 @@ public class OutgoingMessageResource {
         this.service = service;
     }
 
-    //    @PostMapping("${MQTT_CLIENT_MESSAGE_RESOURCE}")
-    @PostMapping("/messages")
+    @PostMapping("${MQTT_CLIENT_MESSAGE_RESOURCE}")
     public ResponseEntity postMessage(@RequestBody Message message) {
         try {
             service.handleOutgoingMessage(message);
             return new ResponseEntity(HttpStatus.ACCEPTED);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (MqttException e) {
             return new ResponseEntity(HttpStatus.SERVICE_UNAVAILABLE);
         }

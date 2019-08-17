@@ -7,7 +7,7 @@ plugins {
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.tlvlp'
-version = '1.0.0'
+version = '1.1.0'
 sourceCompatibility = '1.8'
 def projectName = 'iot-mqtt-client'
 def dockerRepo = 'docker.tlvlp.com'

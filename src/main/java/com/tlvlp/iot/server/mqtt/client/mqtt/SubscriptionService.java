@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SubscriptionService {
-    private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
 
+    private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
     private Properties properties;
     private MqttClient client;
     private MessagingService messagingService;

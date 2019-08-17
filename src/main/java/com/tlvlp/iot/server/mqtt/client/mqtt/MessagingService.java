@@ -1,7 +1,6 @@
 package com.tlvlp.iot.server.mqtt.client.mqtt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.tlvlp.iot.server.mqtt.client.config.Properties;
 import com.tlvlp.iot.server.mqtt.client.persistence.MessageDbService;
 import com.tlvlp.iot.server.mqtt.client.rpc.IncomingMessageForwarder;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -23,14 +22,12 @@ public class MessagingService {
     private MessageDbService messageDbService;
     private IncomingMessageForwarder forwarder;
     private JsonParser jsonParser;
-    private Properties properties;
 
     public MessagingService(MessageDbService messageDbService, IncomingMessageForwarder forwarder,
-                            JsonParser jsonParser, Properties properties, MqttClient client) {
+                            JsonParser jsonParser, MqttClient client) {
         this.messageDbService = messageDbService;
         this.forwarder = forwarder;
         this.jsonParser = jsonParser;
-        this.properties = properties;
         this.client = client;
     }
 
@@ -49,7 +46,6 @@ public class MessagingService {
                     jsonParser.getObjectFromJson(new String(message.getPayload()), HashMap.class);
             Message newMessage = new Message()
                     .setTimeArrived(LocalDateTime.now())
-                    .setModule(payloadMap.get("module"))
                     .setDirection(Message.Direction.INCOMING)
                     .setTopic(topic)
                     .setUnitID(payloadMap.get("unitID"))
@@ -92,7 +88,7 @@ public class MessagingService {
     }
 
     private boolean isValidMessage(Message message) {
-        return message.getModule() != null && message.getUnitID() != null;
+        return message.getUnitID() != null;
     }
 
 }
