@@ -22,7 +22,7 @@ public class Client {
 
         String brokerUri = properties.MQTT_CLIENT_BROKER_URI;
 
-        String randomizedClientID = String.format("%s_%s",
+        String randomizedClientID = String.format("%s%s",
                 properties.MQTT_CLIENT_MQTT_BROKER_USER,
                 LocalDateTime.now().hashCode());
 
