@@ -29,7 +29,7 @@ public class IncomingMessageForwarder {
                     properties.UNIT_SERVICE_MESSAGE_RESOURCE_URI,
                     message,
                     String.class);
-            log.debug("Message (id: {}) forwarded to the Unit Service.", message.getTimeArrived());
+            log.info("Message (id: {}) forwarded to the Unit Service.", message.getTimeArrived());
         } catch (ResourceAccessException e) {
             log.error("Unit Service is not responding: {}", e.getMessage());
         } catch (HttpServerErrorException | HttpClientErrorException e) {

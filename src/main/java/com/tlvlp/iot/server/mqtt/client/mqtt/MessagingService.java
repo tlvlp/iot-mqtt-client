@@ -1,6 +1,8 @@
 package com.tlvlp.iot.server.mqtt.client.mqtt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tlvlp.iot.server.mqtt.client.persistence.MessageDbService;
 import com.tlvlp.iot.server.mqtt.client.rpc.IncomingMessageForwarder;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -21,14 +23,14 @@ public class MessagingService {
     private MqttClient client;
     private MessageDbService messageDbService;
     private IncomingMessageForwarder forwarder;
-    private JsonParser jsonParser;
+    private ObjectMapper jsonMapper;
 
     public MessagingService(MessageDbService messageDbService, IncomingMessageForwarder forwarder,
-                            JsonParser jsonParser, MqttClient client) {
+                            MqttClient client, ObjectMapper jsonMapper) {
         this.messageDbService = messageDbService;
         this.forwarder = forwarder;
-        this.jsonParser = jsonParser;
         this.client = client;
+        this.jsonMapper = jsonMapper;
     }
 
     /**
@@ -42,8 +44,10 @@ public class MessagingService {
      */
     public void handleIncomingMessage(String topic, org.eclipse.paho.client.mqttv3.MqttMessage message) {
         try {
+            TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
+            };
             Map<String, String> payloadMap =
-                    jsonParser.getObjectFromJson(new String(message.getPayload()), HashMap.class);
+                    this.jsonMapper.readValue(new String(message.getPayload()), typeRef);
             Message newMessage = new Message()
                     .setTimeArrived(LocalDateTime.now())
                     .setDirection(Message.Direction.INCOMING)
@@ -83,8 +87,8 @@ public class MessagingService {
 
     private void sendMessage(Message message) throws MqttException, JsonProcessingException {
         String topic = message.getTopic();
-        String payload = jsonParser.getJsonFromObject(message.getPayload());
-        client.publish(topic, new org.eclipse.paho.client.mqttv3.MqttMessage(payload.getBytes()));
+        byte[] payload = this.jsonMapper.writeValueAsBytes(message.getPayload());
+        client.publish(topic, new org.eclipse.paho.client.mqttv3.MqttMessage(payload));
     }
 
     private boolean isValidMessage(Message message) {
