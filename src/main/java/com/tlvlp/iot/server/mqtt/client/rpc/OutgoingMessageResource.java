@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class OutgoingMessageResource {
@@ -24,9 +25,9 @@ public class OutgoingMessageResource {
             service.handleOutgoingMessage(message);
             return new ResponseEntity(HttpStatus.ACCEPTED);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (MqttException e) {
-            return new ResponseEntity(HttpStatus.SERVICE_UNAVAILABLE);
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage());
         }
     }
 }
