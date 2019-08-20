@@ -54,35 +54,27 @@ public class MessagingService {
                     .setTopic(topic)
                     .setUnitID(payloadMap.get("unitID"))
                     .setPayload(payloadMap);
-            if (isValidMessage(newMessage)) {
-                messageDbService.save(newMessage);
-                forwarder.forwardMessage(newMessage);
-            } else {
-                log.error("Error cannot save new MQTT message! Incomplete details: {}", newMessage);
-            }
-        } catch (IOException e) {
-            log.error("Error deserializing MQTT message", e);
+            checkMessageValidity(newMessage);
+            messageDbService.save(newMessage);
+            forwarder.forwardMessage(newMessage);
+        } catch (IOException | IllegalArgumentException e) {
+            log.error("Error deserializing MQTT message: {}", e.getMessage());
         }
     }
 
     public void handleOutgoingMessage(Message message) throws MqttException, IllegalArgumentException {
         message.setDirection(Message.Direction.OUTGOING);
         message.setTimeArrived(LocalDateTime.now());
-        if (isValidMessage(message)) {
-            try {
-                sendMessage(message);
-                messageDbService.save(message);
-            } catch (JsonProcessingException e) {
-                String er = String.format("Error sending MQTT message: %s", e.getMessage());
-                log.error(er);
-                throw new IllegalArgumentException(er);
-            }
-        } else {
-            String er = String.format("Error cannot process outgoing MQTT message! Incomplete details: %s", message);
+        try {
+            checkMessageValidity(message);
+            sendMessage(message);
+            messageDbService.save(message);
+            log.info("MQTT message sent: {}", message);
+        } catch (JsonProcessingException e) {
+            String er = String.format("Error sending MQTT message: %s", e.getMessage());
             log.error(er);
             throw new IllegalArgumentException(er);
         }
-        log.info("MQTT message sent: {}", message);
     }
 
     private void sendMessage(Message message) throws MqttException, JsonProcessingException {
@@ -91,8 +83,10 @@ public class MessagingService {
         client.publish(topic, new org.eclipse.paho.client.mqttv3.MqttMessage(payload));
     }
 
-    private boolean isValidMessage(Message message) {
-        return message.getUnitID() != null;
+    private void checkMessageValidity(Message message) throws IllegalArgumentException {
+        if (message.getUnitID() == null) {
+            throw new IllegalArgumentException("Missing unitID");
+        }
     }
 
 }
