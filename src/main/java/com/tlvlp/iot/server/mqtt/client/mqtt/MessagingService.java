@@ -47,7 +47,7 @@ public class MessagingService {
             TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
             };
             Map<String, String> payloadMap =
-                    this.jsonMapper.readValue(new String(message.getPayload()), typeRef);
+                    jsonMapper.readValue(new String(message.getPayload()), typeRef);
             Message newMessage = new Message()
                     .setTimeArrived(LocalDateTime.now())
                     .setDirection(Message.Direction.INCOMING)
@@ -79,7 +79,7 @@ public class MessagingService {
 
     private void sendMessage(Message message) throws MqttException, JsonProcessingException {
         String topic = message.getTopic();
-        byte[] payload = this.jsonMapper.writeValueAsBytes(message.getPayload());
+        byte[] payload = jsonMapper.writeValueAsBytes(message.getPayload());
         client.publish(topic, new org.eclipse.paho.client.mqttv3.MqttMessage(payload));
     }
 
