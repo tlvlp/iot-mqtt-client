@@ -26,7 +26,7 @@ public class IncomingMessageForwarder {
     public void forwardMessage(Message message) {
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(
-                    properties.UNIT_SERVICE_MESSAGE_RESOURCE_URI,
+                    properties.UNIT_SERVICE_MESSAGE_CONTROL_URI,
                     message,
                     String.class);
             log.info("Message (id: {}) forwarded to the Unit Service.", message.getTimeArrived());
