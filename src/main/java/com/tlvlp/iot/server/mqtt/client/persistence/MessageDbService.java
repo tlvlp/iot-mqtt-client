@@ -1,6 +1,5 @@
 package com.tlvlp.iot.server.mqtt.client.persistence;
 
-import com.tlvlp.iot.server.mqtt.client.mqtt.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

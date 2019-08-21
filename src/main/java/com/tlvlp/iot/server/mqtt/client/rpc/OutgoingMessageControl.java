@@ -1,7 +1,7 @@
 package com.tlvlp.iot.server.mqtt.client.rpc;
 
-import com.tlvlp.iot.server.mqtt.client.mqtt.Message;
 import com.tlvlp.iot.server.mqtt.client.mqtt.MessagingService;
+import com.tlvlp.iot.server.mqtt.client.persistence.Message;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

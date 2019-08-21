@@ -1,4 +1,4 @@
-package com.tlvlp.iot.server.mqtt.client.mqtt;
+package com.tlvlp.iot.server.mqtt.client.persistence;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

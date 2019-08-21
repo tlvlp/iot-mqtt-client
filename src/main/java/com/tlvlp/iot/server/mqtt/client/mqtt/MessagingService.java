@@ -3,6 +3,7 @@ package com.tlvlp.iot.server.mqtt.client.mqtt;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tlvlp.iot.server.mqtt.client.persistence.Message;
 import com.tlvlp.iot.server.mqtt.client.persistence.MessageDbService;
 import com.tlvlp.iot.server.mqtt.client.rpc.IncomingMessageForwarder;
 import org.eclipse.paho.client.mqttv3.MqttClient;

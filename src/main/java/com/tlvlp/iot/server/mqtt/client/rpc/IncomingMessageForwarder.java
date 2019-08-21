@@ -1,7 +1,7 @@
 package com.tlvlp.iot.server.mqtt.client.rpc;
 
 import com.tlvlp.iot.server.mqtt.client.config.Properties;
-import com.tlvlp.iot.server.mqtt.client.mqtt.Message;
+import com.tlvlp.iot.server.mqtt.client.persistence.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
