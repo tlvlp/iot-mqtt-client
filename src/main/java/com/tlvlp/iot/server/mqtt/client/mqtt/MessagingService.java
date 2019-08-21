@@ -86,6 +86,8 @@ public class MessagingService {
     private void checkMessageValidity(Message message) throws IllegalArgumentException {
         if (message.getUnitID() == null) {
             throw new IllegalArgumentException("Missing unitID");
+        } else if (message.getTopic() == null) {
+            throw new IllegalArgumentException("Missing topic");
         }
     }
 
