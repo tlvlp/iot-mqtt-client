@@ -53,7 +53,6 @@ public class MessagingService {
                     .setTimeArrived(LocalDateTime.now())
                     .setDirection(Message.Direction.INCOMING)
                     .setTopic(topic)
-                    .setUnitID(payloadMap.get("unitID"))
                     .setPayload(payloadMap);
             checkMessageValidity(newMessage);
             messageDbService.save(newMessage);
@@ -85,7 +84,7 @@ public class MessagingService {
     }
 
     private void checkMessageValidity(Message message) throws IllegalArgumentException {
-        if (message.getUnitID() == null) {
+        if (message.getPayload().get("unitID") == null) {
             throw new IllegalArgumentException("Missing unitID");
         } else if (message.getTopic() == null) {
             throw new IllegalArgumentException("Missing topic");
