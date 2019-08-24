@@ -10,24 +10,29 @@ IoT units (via an mqtt broker) and the rest of the services.
 * Persist all messages to the database.
 
 ## Deployment
-See the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment)
+For settings and deployemnt details see the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment)
 
 
 ## Server-side API
 Actual API endpoints are inherited from the he project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment) via environment variables.
 
 ### POST outgoing messages:
-Mandatory fields:
-- unitID: The ID of the MCU to be targeted by the message
-- topic
+
+Takes a Message object but the mandatory fields are:
+- topic: a String containing the targeted MQTT topic
+- payload: A Map<String, String> of the payload to be sent to the subscribers of the topic
 
 ```
 {
-    "unitID": "my_test_unitID",
-    "topic": "/units/my_test_unitID/control"
+    "topic": "/units/my_test_unitID/control",
+    "payload": 
+        {
+            "first": "value",
+            "second": "value"
+        }
 }
 ```
 
 ## MQTT API
 
-The MQTT API is detailed in the project's [Unit service](https://gitlab.com/tlvlp/iot.server.unit.service) that is the end consumer.
+The MQTT API is detailed in the project's [Unit service](https://gitlab.com/tlvlp/iot.server.unit.service).
