@@ -18,9 +18,15 @@ Actual API endpoints are inherited from the he project's [deployment repository]
 
 ### POST outgoing messages:
 
+##### Related global variables:
+- ${MQTT_CLIENT_MESSAGE_CONTROL}
+- ${MQTT_CLIENT_MESSAGE_CONTROL_URI}
+
+##### Fields:
 Takes a Message object but the mandatory fields are:
-- topic: a String containing the targeted MQTT topic
-- payload: A Map<String, String> of the payload to be sent to the subscribers of the topic
+- "topic": a String containing the targeted MQTT topic
+- "payload": A Map<String, String> of the payload to be sent to the subscribers of the topic
+- all the other field from the Message object are ignored if present
 
 ```
 {
