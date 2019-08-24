@@ -34,15 +34,6 @@ public class MessagingService {
         this.jsonMapper = jsonMapper;
     }
 
-    /**
-     * Handles incoming messages
-     * 1. Creates a new {@link Message} with the details from the incoming MQTT message
-     * 2. Saves the created message to the database
-     * 3. Forwards it to the processing service
-     *
-     * @param topic   - MQTT topic
-     * @param message - MQTT message
-     */
     public void handleIncomingMessage(String topic, org.eclipse.paho.client.mqttv3.MqttMessage message) {
         try {
             TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
@@ -84,8 +75,8 @@ public class MessagingService {
     }
 
     private void checkMessageValidity(Message message) throws IllegalArgumentException {
-        if (message.getPayload().get("unitID") == null) {
-            throw new IllegalArgumentException("Missing unitID");
+        if (message.getPayload() == null) {
+            throw new IllegalArgumentException("Missing payload");
         } else if (message.getTopic() == null) {
             throw new IllegalArgumentException("Missing topic");
         }
