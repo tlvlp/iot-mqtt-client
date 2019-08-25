@@ -4,8 +4,8 @@
 Part of the tlvlp IoT project's server side microservices.
 
 This Dockerized SpringBoot-based service is responsible for the communication between 
-IoT units (via an mqtt broker) and the rest of the services.
-- Subscribes to global mqtt topics to accept status updates from units
+IoT units (via an MQTT broker) and the rest of the services.
+- Subscribes to global MQTT topics to accept status updates from units
 - Handles all incoming and outgoing messages.
 - Persist all messages to the database.
 
@@ -13,7 +13,7 @@ IoT units (via an mqtt broker) and the rest of the services.
 - This service is currently designed as **stateless** but still should only have one instance running per Docker Swarm Stack 
 since the Mosquitto MQTT broker is not set up to be able to load balance topic subscriptions between multiple clients.
 [VerneMQ](https://vernemq.com/) would be a good candidate for that scenario.
-- For settings and deployemnt details see the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment)
+- For settings and deployment details see the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment)
 
 
 ## Server-side API
