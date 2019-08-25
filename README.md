@@ -19,7 +19,7 @@ since the Mosquitto MQTT broker is not set up to be able to load balance topic s
 ## Server-side API
 Actual API endpoints are inherited from the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment) via environment variables.
 
-### POST outgoing messages:
+### POST Message (outgoing messages):
 
 ##### Related environment variables:
 - ${MQTT_CLIENT_MESSAGE_CONTROL}
@@ -27,8 +27,8 @@ Actual API endpoints are inherited from the project's [deployment repository](ht
 
 ##### Fields:
 Takes a Message object in the RequestBody but the mandatory fields are:
-- **topic**: a String containing the targeted MQTT topic
-- **payload**: A Map<String, String> of the payload to be sent to the subscribers of the topic
+- **topic**: String containing the targeted MQTT topic
+- **payload**: Map<String, String> of the payload to be sent to the subscribers of the topic
 - all the other fields from the Message object are ignored.
 
 
