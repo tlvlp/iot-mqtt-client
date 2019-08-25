@@ -17,7 +17,7 @@ public class MessageDbService {
 
     public Message save(Message message) {
         Message savedMessage = repository.save(message);
-        log.info("Message saved: {}", savedMessage);
+        log.debug("Message saved: {}", savedMessage);
         return savedMessage;
     }
 }
