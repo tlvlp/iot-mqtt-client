@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-public class OutgoingMessageControl {
+public class OutgoingMessageAPI {
 
     private MessagingService service;
 
-    public OutgoingMessageControl(MessagingService service) {
+    public OutgoingMessageAPI(MessagingService service) {
         this.service = service;
     }
 
-    @PostMapping("${MQTT_CLIENT_MESSAGE_CONTROL}")
+    @PostMapping("${MQTT_CLIENT_API_OUTGOING_MESSAGE}")
     public ResponseEntity postMessage(@RequestBody Message message) {
         try {
             service.handleOutgoingMessage(message);

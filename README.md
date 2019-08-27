@@ -22,8 +22,8 @@ Actual API endpoints are inherited from the project's [deployment repository](ht
 ### POST Message (outgoing messages):
 
 ##### Related environment variables:
-- ${MQTT_CLIENT_MESSAGE_CONTROL}
-- ${MQTT_CLIENT_MESSAGE_CONTROL_URI}
+- ${MQTT_CLIENT_API_OUTGOING_MESSAGE}
+- ${MQTT_CLIENT_API_OUTGOING_MESSAGE_URL}
 
 ##### Fields:
 Takes a Message object in the RequestBody but the mandatory fields are:
