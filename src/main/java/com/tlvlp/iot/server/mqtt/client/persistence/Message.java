@@ -24,9 +24,6 @@ public class Message {
     private String topic;
     private Map<String, String> payload;
 
-    public Message() {
-    }
-
     @Override
     public String toString() {
         return "Message{" +

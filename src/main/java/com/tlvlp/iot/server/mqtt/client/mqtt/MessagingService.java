@@ -54,10 +54,10 @@ public class MessagingService {
     }
 
     public void handleOutgoingMessage(Message message) throws MqttException, IllegalArgumentException {
-        message.setDirection(Message.Direction.OUTGOING);
-        message.setTimeArrived(LocalDateTime.now());
         try {
             checkMessageValidity(message);
+            message.setDirection(Message.Direction.OUTGOING);
+            message.setTimeArrived(LocalDateTime.now());
             sendMessage(message);
             messageDbService.save(message);
             log.info("MQTT message sent: {}", message);
