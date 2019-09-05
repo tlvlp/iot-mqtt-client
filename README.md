@@ -9,6 +9,11 @@ IoT units (via an MQTT broker) and the rest of the services.
 - Handles all incoming and outgoing messages.
 - Persist all messages to the database.
 
+## Building and publishing JAR + Docker image
+This project is using the using the [Palantir Docker Gradle plugin](https://github.com/palantir/gradle-docker).
+All configuration can be found in the [Gradle build file](build.gradle) file 
+and is recommended to be run with the docker/dockerTagsPush task.
+
 ## Deployment
 - This service is currently designed as **stateless** but still should only have one instance running per Docker Swarm Stack 
 since the Mosquitto MQTT broker is not set up to be able to load balance topic subscriptions between multiple clients.
