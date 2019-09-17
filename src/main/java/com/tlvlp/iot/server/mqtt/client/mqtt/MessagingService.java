@@ -8,6 +8,7 @@ import com.tlvlp.iot.server.mqtt.client.persistence.MessageDbService;
 import com.tlvlp.iot.server.mqtt.client.rpc.IncomingMessageForwarder;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,15 +27,14 @@ public class MessagingService {
     private IncomingMessageForwarder forwarder;
     private ObjectMapper jsonMapper;
 
-    public MessagingService(MessageDbService messageDbService, IncomingMessageForwarder forwarder,
-                            MqttClient client, ObjectMapper jsonMapper) {
+    public MessagingService(MessageDbService messageDbService, IncomingMessageForwarder forwarder, MqttClient client) {
         this.messageDbService = messageDbService;
         this.forwarder = forwarder;
         this.client = client;
-        this.jsonMapper = jsonMapper;
+        this.jsonMapper = new ObjectMapper();
     }
 
-    public void handleIncomingMessage(String topic, org.eclipse.paho.client.mqttv3.MqttMessage message) {
+    public void handleIncomingMessage(String topic, MqttMessage message) {
         try {
             TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
             };
@@ -45,11 +45,14 @@ public class MessagingService {
                     .setDirection(Message.Direction.INCOMING)
                     .setTopic(topic)
                     .setPayload(payloadMap);
+
+            System.out.println("MSG" + newMessage);
+
             checkMessageValidity(newMessage);
             messageDbService.save(newMessage);
             forwarder.forwardMessage(newMessage);
         } catch (IOException | IllegalArgumentException e) {
-            log.error("Error deserializing MQTT message: {}", e.getMessage());
+            log.error("Error parsing MQTT message: {}", e.getMessage());
         }
     }
 
@@ -71,7 +74,7 @@ public class MessagingService {
     private void sendMessage(Message message) throws MqttException, JsonProcessingException {
         String topic = message.getTopic();
         byte[] payload = jsonMapper.writeValueAsBytes(message.getPayload());
-        client.publish(topic, new org.eclipse.paho.client.mqttv3.MqttMessage(payload));
+        client.publish(topic, new MqttMessage(payload));
     }
 
     private void checkMessageValidity(Message message) throws IllegalArgumentException {
