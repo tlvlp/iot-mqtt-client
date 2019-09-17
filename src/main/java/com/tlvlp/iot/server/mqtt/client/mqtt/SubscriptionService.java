@@ -24,9 +24,9 @@ public class SubscriptionService {
     }
 
     public void subscribeToTopics() {
-        String[] topics = properties.MQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV.split(",");
+        String[] topics = properties.getMQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV().split(",");
         for (String topic : topics) {
-            subscribe(topic, properties.MQTT_CLIENT_DEFAULT_QOS, getDefaultMqttMessageListener());
+            subscribe(topic, properties.getMQTT_CLIENT_DEFAULT_QOS(), getDefaultMqttMessageListener());
         }
     }
 

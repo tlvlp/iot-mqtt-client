@@ -19,8 +19,8 @@ public class BrokerConnector {
     public BrokerConnector(MqttClient client, Properties properties) {
         this.client = client;
         connectOptions = new MqttConnectOptions();
-        connectOptions.setUserName(properties.MQTT_CLIENT_MQTT_BROKER_USER);
-        connectOptions.setPassword(properties.MQTT_CLIENT_MQTT_BROKER_PASS_SECRET_FILE_PARSED.toCharArray());
+        connectOptions.setUserName(properties.getMQTT_CLIENT_MQTT_BROKER_USER());
+        connectOptions.setPassword(properties.getMQTT_CLIENT_MQTT_BROKER_PASS_SECRET_FILE_PARSED().toCharArray());
         connectOptions.setAutomaticReconnect(true);
         connectOptions.setConnectionTimeout(30);
         connectOptions.setKeepAliveInterval(30);

@@ -20,10 +20,10 @@ public class Client {
     @Bean
     public MqttClient getMqttClient() throws MqttException {
 
-        String brokerUri = properties.MQTT_CLIENT_BROKER_URI;
+        String brokerUri = properties.getMQTT_CLIENT_BROKER_URI();
 
         String randomizedClientID = String.format("%s%s",
-                properties.MQTT_CLIENT_MQTT_BROKER_USER,
+                properties.getMQTT_CLIENT_MQTT_BROKER_USER(),
                 LocalDateTime.now().hashCode());
 
         return new MqttClient(brokerUri, randomizedClientID);
