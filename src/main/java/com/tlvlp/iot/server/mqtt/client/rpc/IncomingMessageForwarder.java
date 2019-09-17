@@ -25,15 +25,19 @@ public class IncomingMessageForwarder {
 
     public void forwardMessage(Message message) {
         try {
+
             ResponseEntity<String> response = restTemplate.postForEntity(
-                    properties.getUNIT_SERVICE_API_INCOMING_MESSAGE_URL(),
+                    String.format("http://%s:%s%s",
+                            properties.getAPI_GATEWAY_NAME(),
+                            properties.getAPI_GATEWAY_PORT(),
+                            properties.getAPI_GATEWAY_API_INCOMING_MQTT_MESSAGE()),
                     message,
                     String.class);
-            log.info("Message (id: {}) forwarded to the Unit Service.", message.getTimeArrived());
+            log.info("Message (id: {}) forwarded to the API Gateway.", message.getTimeArrived());
         } catch (ResourceAccessException e) {
-            log.error("Unit Service is not responding: {}", e.getMessage());
+            log.error("API Gateway is not responding: {}", e.getMessage());
         } catch (HttpServerErrorException | HttpClientErrorException e) {
-            log.error("Cannot forward message to Unit Service: {}", e.getResponseBodyAsString());
+            log.error("Cannot forward message to API Gateway: {}", e.getResponseBodyAsString());
         }
     }
 

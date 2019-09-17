@@ -23,8 +23,14 @@ public class Properties {
     @Value("${MQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV}")
     private String MQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV;
 
-    @Value("${UNIT_SERVICE_API_INCOMING_MESSAGE_URL}")
-    private String UNIT_SERVICE_API_INCOMING_MESSAGE_URL;
+    @Value("${API_GATEWAY_NAME}")
+    private String API_GATEWAY_NAME;
+
+    @Value("${API_GATEWAY_PORT}")
+    private String API_GATEWAY_PORT;
+
+    @Value("${API_GATEWAY_API_INCOMING_MQTT_MESSAGE}")
+    private String API_GATEWAY_API_INCOMING_MQTT_MESSAGE;
 
 
     public String getMQTT_CLIENT_BROKER_URI() {
@@ -47,7 +53,15 @@ public class Properties {
         return MQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV;
     }
 
-    public String getUNIT_SERVICE_API_INCOMING_MESSAGE_URL() {
-        return UNIT_SERVICE_API_INCOMING_MESSAGE_URL;
+    public String getAPI_GATEWAY_NAME() {
+        return API_GATEWAY_NAME;
+    }
+
+    public String getAPI_GATEWAY_PORT() {
+        return API_GATEWAY_PORT;
+    }
+
+    public String getAPI_GATEWAY_API_INCOMING_MQTT_MESSAGE() {
+        return API_GATEWAY_API_INCOMING_MQTT_MESSAGE;
     }
 }

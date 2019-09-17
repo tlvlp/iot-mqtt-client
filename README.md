@@ -6,8 +6,9 @@ Part of the tlvlp IoT project's server side microservices.
 This Dockerized SpringBoot-based service is responsible for the communication between 
 IoT units (via an MQTT broker) and the rest of the services.
 - Subscribes to global MQTT topics to accept status updates from units
-- Handles all incoming and outgoing messages.
-- Persist all messages to the database.
+- Forwards all incoming messages to the API Gateway.
+- Sends all outgoing messages to the topics specified in each message.
+- Persists all incoming and outgoing message to the database.
 
 ## Building and publishing JAR + Docker image
 This project is using the using the [Palantir Docker Gradle plugin](https://github.com/palantir/gradle-docker).
