@@ -4,7 +4,6 @@ import com.tlvlp.iot.server.mqtt.client.config.Properties;
 import com.tlvlp.iot.server.mqtt.client.persistence.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -25,8 +24,7 @@ public class IncomingMessageForwarder {
 
     public void forwardMessage(Message message) {
         try {
-
-            ResponseEntity<String> response = restTemplate.postForEntity(
+            restTemplate.postForEntity(
                     String.format("http://%s:%s%s",
                             properties.getAPI_GATEWAY_NAME(),
                             properties.getAPI_GATEWAY_PORT(),
