@@ -3,6 +3,8 @@ package com.tlvlp.iot.server.mqtt.client.persistence;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
@@ -21,7 +23,9 @@ public class Message {
     @Id
     private LocalDateTime timeArrived;
     private Direction direction;
+    @NotBlank
     private String topic;
+    @NotNull
     private Map<String, String> payload;
 
     @Override

@@ -1,4 +1,4 @@
-package com.tlvlp.iot.server.mqtt.client.rpc;
+package com.tlvlp.iot.server.mqtt.client.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

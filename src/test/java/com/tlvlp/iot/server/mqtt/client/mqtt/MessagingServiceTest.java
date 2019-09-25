@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tlvlp.iot.server.mqtt.client.persistence.Message;
 import com.tlvlp.iot.server.mqtt.client.persistence.MessageDbService;
-import com.tlvlp.iot.server.mqtt.client.rpc.IncomingMessageForwarder;
+import com.tlvlp.iot.server.mqtt.client.services.IncomingMessageForwarder;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -21,7 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 
@@ -94,23 +95,4 @@ class MessagingServiceTest {
         assertEquals(updatedMessage.getPayload(), payloadMap, "Payload remains unchanged");
     }
 
-    @Test
-    @DisplayName("Handle an incorrect outgoing message where the topic is null")
-    void handleOutgoingMessageNullTopic() {
-        message.setTopic(null);
-        assertThrows(IllegalArgumentException.class,
-                () -> messagingService.handleOutgoingMessage(message),
-                "null topic should throw an exception");
-        then(messageDbService).shouldHaveZeroInteractions();
-    }
-
-    @Test
-    @DisplayName("Handle an incorrect outgoing message where the payload is null")
-    void handleOutgoingMessageNullPayload() {
-        message.setPayload(null);
-        assertThrows(IllegalArgumentException.class,
-                () -> messagingService.handleOutgoingMessage(message),
-                "null payload should throw an exception");
-        then(messageDbService).shouldHaveZeroInteractions();
-    }
 }

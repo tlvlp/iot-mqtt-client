@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
+
 @RestController
 public class OutgoingMessageAPI {
 
@@ -20,7 +22,7 @@ public class OutgoingMessageAPI {
     }
 
     @PostMapping("${MQTT_CLIENT_API_OUTGOING_MESSAGE}")
-    public ResponseEntity postMessage(@RequestBody Message message) {
+    public ResponseEntity postMessage(@RequestBody @Valid Message message) {
         try {
             service.handleOutgoingMessage(message);
             return new ResponseEntity(HttpStatus.ACCEPTED);

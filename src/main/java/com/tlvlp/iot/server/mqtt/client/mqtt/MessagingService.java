@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tlvlp.iot.server.mqtt.client.persistence.Message;
 import com.tlvlp.iot.server.mqtt.client.persistence.MessageDbService;
-import com.tlvlp.iot.server.mqtt.client.rpc.IncomingMessageForwarder;
+import com.tlvlp.iot.server.mqtt.client.services.IncomingMessageForwarder;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Validation;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -45,10 +46,10 @@ public class MessagingService {
                     .setDirection(Message.Direction.INCOMING)
                     .setTopic(topic)
                     .setPayload(payloadMap);
-
-            System.out.println("MSG" + newMessage);
-
-            checkMessageValidity(newMessage);
+            var validationProblems = Validation.buildDefaultValidatorFactory().getValidator().validate(newMessage);
+            if (!validationProblems.isEmpty()) {
+                throw new IllegalArgumentException(validationProblems.toString());
+            }
             messageDbService.save(newMessage);
             forwarder.forwardMessage(newMessage);
         } catch (IOException | IllegalArgumentException e) {
@@ -58,7 +59,7 @@ public class MessagingService {
 
     public void handleOutgoingMessage(Message message) throws MqttException, IllegalArgumentException {
         try {
-            checkMessageValidity(message);
+//            checkMessageValidity(message);
             message.setDirection(Message.Direction.OUTGOING);
             message.setTimeArrived(LocalDateTime.now());
             sendMessage(message);
@@ -77,13 +78,13 @@ public class MessagingService {
         client.publish(topic, new MqttMessage(payload));
     }
 
-    private void checkMessageValidity(Message message) throws IllegalArgumentException {
-        if (message.getPayload() == null) {
-            throw new IllegalArgumentException("Missing payload");
-        } else if (message.getTopic() == null) {
-            throw new IllegalArgumentException("Missing topic");
-        }
-    }
+//    private void checkMessageValidity(Message message) throws IllegalArgumentException {
+//        if (message.getPayload() == null) {
+//            throw new IllegalArgumentException("Missing payload");
+//        } else if (message.getTopic() == null) {
+//            throw new IllegalArgumentException("Missing topic");
+//        }
+//    }
 
 }
 

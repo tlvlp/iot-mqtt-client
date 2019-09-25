@@ -1,4 +1,4 @@
-package com.tlvlp.iot.server.mqtt.client.rpc;
+package com.tlvlp.iot.server.mqtt.client.services;
 
 import com.tlvlp.iot.server.mqtt.client.config.Properties;
 import com.tlvlp.iot.server.mqtt.client.persistence.Message;
