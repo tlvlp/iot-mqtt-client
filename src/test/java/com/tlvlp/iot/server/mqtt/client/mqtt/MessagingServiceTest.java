@@ -1,6 +1,7 @@
 package com.tlvlp.iot.server.mqtt.client.mqtt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tlvlp.iot.server.mqtt.client.persistence.Message;
 import com.tlvlp.iot.server.mqtt.client.persistence.MessageDbService;
@@ -18,12 +19,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +39,8 @@ class MessagingServiceTest {
     private MessageDbService messageDbService;
     @Mock
     private IncomingMessageForwarder forwarder;
+    @Mock
+    private ObjectMapper objectMapperMock;
 
     @InjectMocks
     private MessagingService messagingService;
@@ -47,23 +52,23 @@ class MessagingServiceTest {
     private MqttMessage mqttMessage;
     private String topic = "topic";
     private Map<String, String> payloadMap;
-    private byte[] payloadBytes;
 
     @BeforeEach
     void beforeEach() throws JsonProcessingException {
-        ObjectMapper om = new ObjectMapper();
         topic = "topic";
         payloadMap = Collections.singletonMap("k", "v");
         message = new Message()
                 .setTopic(topic)
                 .setPayload(payloadMap);
-        payloadBytes = om.writeValueAsBytes(payloadMap);
-        mqttMessage = new MqttMessage(payloadBytes);
+        mqttMessage = new MqttMessage(new byte[0]);
     }
 
     @Test
     @DisplayName("Handle an incoming message that is correct")
-    void handleIncomingMessageCorrect() throws JsonProcessingException {
+    void handleIncomingMessage() throws IOException {
+        // given
+        given(objectMapperMock.readValue(anyString(), any(TypeReference.class))).willReturn(payloadMap);
+
         // when
         messagingService.handleIncomingMessage(topic, mqttMessage);
 
@@ -81,11 +86,17 @@ class MessagingServiceTest {
 
 
     @Test
-    void handleOutgoingMessage() throws MqttException {
+    void handleOutgoingMessage() throws MqttException, IOException {
+        var payload = new byte[0];
+        // given
+        given(objectMapperMock.writeValueAsBytes(anyMap())).willReturn(payload);
+
         // when
         messagingService.handleOutgoingMessage(message);
 
         // then
+        then(objectMapperMock).should().writeValueAsBytes(anyMap());
+        then(client).should().publish(anyString(), any(MqttMessage.class));
         then(messageDbService).should().save(messageCaptor.capture());
         Message updatedMessage = messageCaptor.getValue();
         assertNotNull(updatedMessage);

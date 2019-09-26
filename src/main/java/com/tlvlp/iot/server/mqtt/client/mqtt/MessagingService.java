@@ -28,16 +28,17 @@ public class MessagingService {
     private IncomingMessageForwarder forwarder;
     private ObjectMapper jsonMapper;
 
-    public MessagingService(MessageDbService messageDbService, IncomingMessageForwarder forwarder, MqttClient client) {
+    public MessagingService(MessageDbService messageDbService, IncomingMessageForwarder forwarder,
+                            MqttClient client, ObjectMapper objectMapper) {
         this.messageDbService = messageDbService;
         this.forwarder = forwarder;
         this.client = client;
-        this.jsonMapper = new ObjectMapper();
+        this.jsonMapper = objectMapper;
     }
 
     public void handleIncomingMessage(String topic, MqttMessage message) {
         try {
-            TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
+            var typeRef = new TypeReference<HashMap<String, String>>() {
             };
             Map<String, String> payloadMap =
                     jsonMapper.readValue(new String(message.getPayload()), typeRef);
@@ -59,7 +60,6 @@ public class MessagingService {
 
     public void handleOutgoingMessage(Message message) throws MqttException, IllegalArgumentException {
         try {
-//            checkMessageValidity(message);
             message.setDirection(Message.Direction.OUTGOING);
             message.setTimeArrived(LocalDateTime.now());
             sendMessage(message);
@@ -77,14 +77,6 @@ public class MessagingService {
         byte[] payload = jsonMapper.writeValueAsBytes(message.getPayload());
         client.publish(topic, new MqttMessage(payload));
     }
-
-//    private void checkMessageValidity(Message message) throws IllegalArgumentException {
-//        if (message.getPayload() == null) {
-//            throw new IllegalArgumentException("Missing payload");
-//        } else if (message.getTopic() == null) {
-//            throw new IllegalArgumentException("Missing topic");
-//        }
-//    }
 
 }
 
