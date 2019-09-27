@@ -86,7 +86,7 @@ class MessagingServiceTest {
 
 
     @Test
-    void handleOutgoingMessage() throws MqttException, IOException {
+    void handleOutgoingMessage() throws MqttException, IOException, InvalidMessageException {
         var payload = new byte[0];
         // given
         given(objectMapperMock.writeValueAsBytes(anyMap())).willReturn(payload);

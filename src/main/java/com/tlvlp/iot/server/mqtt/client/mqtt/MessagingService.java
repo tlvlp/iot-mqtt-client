@@ -49,16 +49,16 @@ public class MessagingService {
                     .setPayload(payloadMap);
             var validationProblems = Validation.buildDefaultValidatorFactory().getValidator().validate(newMessage);
             if (!validationProblems.isEmpty()) {
-                throw new IllegalArgumentException(validationProblems.toString());
+                throw new InvalidMessageException(validationProblems.toString());
             }
             messageDbService.save(newMessage);
             forwarder.forwardMessage(newMessage);
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (IOException | InvalidMessageException e) {
             log.error("Error parsing MQTT message: {}", e.getMessage());
         }
     }
 
-    public void handleOutgoingMessage(Message message) throws MqttException, IllegalArgumentException {
+    public void handleOutgoingMessage(Message message) throws MqttException, InvalidMessageException {
         try {
             message.setDirection(Message.Direction.OUTGOING);
             message.setTimeArrived(LocalDateTime.now());
@@ -66,9 +66,9 @@ public class MessagingService {
             messageDbService.save(message);
             log.info("MQTT message sent: {}", message);
         } catch (JsonProcessingException e) {
-            String er = String.format("Error sending MQTT message: %s", e.getMessage());
-            log.error(er);
-            throw new IllegalArgumentException(er);
+            String err = String.format("Error sending MQTT message: %s", e.getMessage());
+            log.error(err);
+            throw new InvalidMessageException(err);
         }
     }
 

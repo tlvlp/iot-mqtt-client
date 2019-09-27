@@ -1,6 +1,5 @@
 package com.tlvlp.iot.server.mqtt.client.rpc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tlvlp.iot.server.mqtt.client.mqtt.MessagingService;
 import com.tlvlp.iot.server.mqtt.client.persistence.Message;
@@ -35,7 +34,7 @@ class OutgoingMessageAPITest {
     private String messageJSON;
 
     @BeforeEach
-    void beforeEach() throws JsonProcessingException {
+    void beforeEach() {
         message = new Message().setTopic("/topic").setPayload(Map.of());
         mockMvc = MockMvcBuilders.standaloneSetup(outgoingMessageAPI)
                 .addPlaceholderValue("MQTT_CLIENT_API_OUTGOING_MESSAGE", "/endpoint")

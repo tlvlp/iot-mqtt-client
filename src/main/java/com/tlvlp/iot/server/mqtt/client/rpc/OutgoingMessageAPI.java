@@ -1,5 +1,6 @@
 package com.tlvlp.iot.server.mqtt.client.rpc;
 
+import com.tlvlp.iot.server.mqtt.client.mqtt.InvalidMessageException;
 import com.tlvlp.iot.server.mqtt.client.mqtt.MessagingService;
 import com.tlvlp.iot.server.mqtt.client.persistence.Message;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -26,7 +27,7 @@ public class OutgoingMessageAPI {
         try {
             service.handleOutgoingMessage(message);
             return new ResponseEntity(HttpStatus.ACCEPTED);
-        } catch (IllegalArgumentException e) {
+        } catch (InvalidMessageException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (MqttException e) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage());
