@@ -45,29 +45,24 @@ public class SecretsLoader implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        try {
-            System.out.printf("%n%nDiscovering and loading file-based secrets before the service starts.%n");
-            PropertySource<?> system = environment.getPropertySources().get(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME);
-            Map<String, Object> allEnvVariables = environment.getSystemEnvironment();
+        System.out.printf("%n%nDiscovering and loading file-based secrets before the service starts.%n");
+        PropertySource<?> system = environment.getPropertySources().get(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME);
+        Map<String, Object> allEnvVariables = environment.getSystemEnvironment();
 
-            System.out.println("Searching for secrets folder environment variable:");
-            String secretsFolderName = findFolderVar(allEnvVariables);
-            String secretsFolder = getEnvValue(secretsFolderName, system);
+        System.out.println("Searching for secrets folder environment variable:");
+        String secretsFolderName = findFolderVar(allEnvVariables);
+        String secretsFolder = getEnvValue(secretsFolderName, system);
 
-            System.out.println("Searching for secret file environment variables:");
-            List<String> secretFileEnvVariables = findFileVars(allEnvVariables);
-            Map<String, String> secretFileNames = getSecretFileNames(secretFileEnvVariables, system);
+        System.out.println("Searching for secret file environment variables:");
+        List<String> secretFileEnvVariables = findFileVars(allEnvVariables);
+        Map<String, String> secretFileNames = getSecretFileNames(secretFileEnvVariables, system);
 
-            System.out.println("Reading secret files:");
-            Map<String, Object> secrets = getSecrets(secretFileNames, secretsFolder);
-            environment.getPropertySources()
-                    .addAfter(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, new MapPropertySource("secrets", secrets));
-            System.out.println("Secret strings are now available at the following environment variables:");
-            secrets.keySet().forEach(key -> System.out.printf("    %s%n", key));
-        } catch (RuntimeException e) {
-            System.out.println(String.format("Stopping file-based secret loading: %s", e.getMessage()));
-        }
-
+        System.out.println("Reading secret files:");
+        Map<String, Object> secrets = getSecrets(secretFileNames, secretsFolder);
+        environment.getPropertySources()
+                .addAfter(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, new MapPropertySource("secrets", secrets));
+        System.out.println("Secret strings are now available at the following environment variables:");
+        secrets.keySet().forEach(key -> System.out.printf("    %s%n", key));
     }
 
     private String findFolderVar(Map<String, Object> allEnvVariables) {
@@ -77,7 +72,7 @@ public class SecretsLoader implements EnvironmentPostProcessor {
                 .limit(1)
                 .collect(Collectors.toList());
         if (secretsFolderList.isEmpty()) {
-            throw new RuntimeException("Error! Secrets folder variable is missing!");
+            exit("Error! Secrets folder variable is missing!");
         }
         String secretsFolderName = secretsFolderList.get(0);
         System.out.println(String.format("    Secrets folder variable found: %s", secretsFolderName));
@@ -91,7 +86,7 @@ public class SecretsLoader implements EnvironmentPostProcessor {
                 .peek(key -> System.out.printf("    Secret file variable found: %s%n", key))
                 .collect(Collectors.toList());
         if (secretFileEnvVariables.isEmpty()) {
-            throw new RuntimeException("Error! No secret file environment variable found!");
+            exit("Error! No secret file environment variable found!");
         }
         return secretFileEnvVariables;
     }
@@ -128,10 +123,15 @@ public class SecretsLoader implements EnvironmentPostProcessor {
             secret = reader.readLine();
             System.out.printf("    Successfully read: %s%n", secretName);
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Error loading secret: %s\n%s", secretName, e));
+            exit(String.format("Error loading secret: %s\n%s", secretName, e));
         }
         return secret;
     }
 
+    private void exit(String msg) {
+        System.err.println(msg);
+        System.err.println("Exiting application.");
+        System.exit(1);
+    }
 
 }
