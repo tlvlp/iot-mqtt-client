@@ -32,6 +32,13 @@ public class Properties {
     @Value("${API_GATEWAY_API_INCOMING_MQTT_MESSAGE}")
     private String API_GATEWAY_API_INCOMING_MQTT_MESSAGE;
 
+    @Value("${API_GATEWAY_SECURITY_USER_BACKEND}")
+    private String API_GATEWAY_SECURITY_USER_BACKEND;
+
+    @Value("${API_GATEWAY_SECURITY_PASS_BACKEND_SECRET_FILE_PARSED}")
+    private String API_GATEWAY_SECURITY_PASS_BACKEND;
+
+
 
     public String getMQTT_CLIENT_BROKER_URI() {
         return MQTT_CLIENT_BROKER_URI;
@@ -63,5 +70,13 @@ public class Properties {
 
     public String getAPI_GATEWAY_API_INCOMING_MQTT_MESSAGE() {
         return API_GATEWAY_API_INCOMING_MQTT_MESSAGE;
+    }
+
+    public String getAPI_GATEWAY_SECURITY_PASS_BACKEND() {
+        return API_GATEWAY_SECURITY_PASS_BACKEND;
+    }
+
+    public String getAPI_GATEWAY_SECURITY_USER_BACKEND() {
+        return API_GATEWAY_SECURITY_USER_BACKEND;
     }
 }

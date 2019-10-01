@@ -2,14 +2,24 @@ package com.tlvlp.iot.server.mqtt.client.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
-@Component
+@Configuration
 public class RestTemplateBean {
+
+    private Properties properties;
+
+    public RestTemplateBean(Properties properties) {
+        this.properties = properties;
+    }
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
+        return builder
+                .basicAuthentication(
+                        properties.getAPI_GATEWAY_SECURITY_USER_BACKEND(),
+                        properties.getAPI_GATEWAY_SECURITY_PASS_BACKEND())
+                .build();
     }
 }
