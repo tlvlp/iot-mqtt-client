@@ -1,15 +1,19 @@
 package com.tlvlp.iot.server.mqtt.client.mqtt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.tlvlp.iot.server.mqtt.client.config.Properties;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tlvlp.iot.server.mqtt.client.persistence.Message;
 import com.tlvlp.iot.server.mqtt.client.persistence.MessageDbService;
-import com.tlvlp.iot.server.mqtt.client.rpc.IncomingMessageForwarder;
+import com.tlvlp.iot.server.mqtt.client.services.IncomingMessageForwarder;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Validation;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -22,77 +26,56 @@ public class MessagingService {
     private MqttClient client;
     private MessageDbService messageDbService;
     private IncomingMessageForwarder forwarder;
-    private JsonParser jsonParser;
-    private Properties properties;
+    private ObjectMapper jsonMapper;
 
     public MessagingService(MessageDbService messageDbService, IncomingMessageForwarder forwarder,
-                            JsonParser jsonParser, Properties properties, MqttClient client) {
+                            MqttClient client, ObjectMapper objectMapper) {
         this.messageDbService = messageDbService;
         this.forwarder = forwarder;
-        this.jsonParser = jsonParser;
-        this.properties = properties;
         this.client = client;
+        this.jsonMapper = objectMapper;
     }
 
-    /**
-     * Handles incoming messages
-     * 1. Creates a new {@link Message} with the details from the incoming MQTT message
-     * 2. Saves the created message to the database
-     * 3. Forwards it to the processing service
-     *
-     * @param topic   - MQTT topic
-     * @param message - MQTT message
-     */
-    public void handleIncomingMessage(String topic, org.eclipse.paho.client.mqttv3.MqttMessage message) {
+    public void handleIncomingMessage(String topic, MqttMessage message) {
         try {
+            var typeRef = new TypeReference<HashMap<String, String>>() {
+            };
             Map<String, String> payloadMap =
-                    jsonParser.getObjectFromJson(new String(message.getPayload()), HashMap.class);
+                    jsonMapper.readValue(new String(message.getPayload()), typeRef);
             Message newMessage = new Message()
                     .setTimeArrived(LocalDateTime.now())
-                    .setModule(payloadMap.get("module"))
                     .setDirection(Message.Direction.INCOMING)
                     .setTopic(topic)
-                    .setUnitID(payloadMap.get("unitID"))
                     .setPayload(payloadMap);
-            if (isValidMessage(newMessage)) {
-                messageDbService.save(newMessage);
-                forwarder.forwardMessage(newMessage);
-            } else {
-                log.error("Error cannot save new MQTT message! Incomplete details: {}", newMessage);
+            var validationProblems = Validation.buildDefaultValidatorFactory().getValidator().validate(newMessage);
+            if (!validationProblems.isEmpty()) {
+                throw new InvalidMessageException(validationProblems.toString());
             }
-        } catch (IOException e) {
-            log.error("Error deserializing MQTT message", e);
+            messageDbService.save(newMessage);
+            forwarder.forwardMessage(newMessage);
+        } catch (IOException | InvalidMessageException e) {
+            log.error("Error parsing MQTT message: {}", e.getMessage());
         }
     }
 
-    public void handleOutgoingMessage(Message message) throws MqttException, IllegalArgumentException {
-        message.setDirection(Message.Direction.OUTGOING);
-        message.setTimeArrived(LocalDateTime.now());
-        if (isValidMessage(message)) {
-            try {
-                sendMessage(message);
-                messageDbService.save(message);
-            } catch (JsonProcessingException e) {
-                String er = String.format("Error sending MQTT message: %s", e.getMessage());
-                log.error(er);
-                throw new IllegalArgumentException(er);
-            }
-        } else {
-            String er = String.format("Error cannot process outgoing MQTT message! Incomplete details: %s", message);
-            log.error(er);
-            throw new IllegalArgumentException(er);
+    public void handleOutgoingMessage(Message message) throws MqttException, InvalidMessageException {
+        try {
+            message.setDirection(Message.Direction.OUTGOING);
+            message.setTimeArrived(LocalDateTime.now());
+            sendMessage(message);
+            messageDbService.save(message);
+            log.info("MQTT message sent: {}", message);
+        } catch (JsonProcessingException e) {
+            String err = String.format("Error sending MQTT message: %s", e.getMessage());
+            log.error(err);
+            throw new InvalidMessageException(err);
         }
-        log.info("MQTT message sent: {}", message);
     }
 
     private void sendMessage(Message message) throws MqttException, JsonProcessingException {
         String topic = message.getTopic();
-        String payload = jsonParser.getJsonFromObject(message.getPayload());
-        client.publish(topic, new org.eclipse.paho.client.mqttv3.MqttMessage(payload.getBytes()));
-    }
-
-    private boolean isValidMessage(Message message) {
-        return message.getModule() != null && message.getUnitID() != null;
+        byte[] payload = jsonMapper.writeValueAsBytes(message.getPayload());
+        client.publish(topic, new MqttMessage(payload));
     }
 
 }

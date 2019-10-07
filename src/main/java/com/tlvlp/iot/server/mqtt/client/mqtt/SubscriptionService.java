@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SubscriptionService {
-    private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
 
+    private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
     private Properties properties;
     private MqttClient client;
     private MessagingService messagingService;
@@ -24,9 +24,9 @@ public class SubscriptionService {
     }
 
     public void subscribeToTopics() {
-        String[] topics = properties.MQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV.split(",");
+        String[] topics = properties.getMQTT_CLIENT_TOPIC_SUBSCRIPTIONS_CSV().split(",");
         for (String topic : topics) {
-            subscribe(topic, properties.MQTT_CLIENT_DEFAULT_QOS, getDefaultMqttMessageListener());
+            subscribe(topic, properties.getMQTT_CLIENT_DEFAULT_QOS(), getDefaultMqttMessageListener());
         }
     }
 

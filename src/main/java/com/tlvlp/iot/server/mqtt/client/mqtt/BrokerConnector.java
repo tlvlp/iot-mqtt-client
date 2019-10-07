@@ -6,9 +6,9 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class BrokerConnector {
 
     private static final Logger log = LoggerFactory.getLogger(BrokerConnector.class);
@@ -19,8 +19,8 @@ public class BrokerConnector {
     public BrokerConnector(MqttClient client, Properties properties) {
         this.client = client;
         connectOptions = new MqttConnectOptions();
-        connectOptions.setUserName(properties.MQTT_CLIENT_MQTT_BROKER_USER);
-        connectOptions.setPassword(properties.MQTT_CLIENT_MQTT_BROKER_PASS_SECRET_FILE_PARSED.toCharArray());
+        connectOptions.setUserName(properties.getMQTT_CLIENT_MQTT_BROKER_USER());
+        connectOptions.setPassword(properties.getMQTT_CLIENT_MQTT_BROKER_PASS_SECRET_FILE_PARSED().toCharArray());
         connectOptions.setAutomaticReconnect(true);
         connectOptions.setConnectionTimeout(30);
         connectOptions.setKeepAliveInterval(30);

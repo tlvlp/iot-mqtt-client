@@ -1,13 +1,18 @@
-package com.tlvlp.iot.server.mqtt.client.mqtt;
+package com.tlvlp.iot.server.mqtt.client.persistence;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 
 
+/**
+ * An MQTT message sent between the server and the MCUs
+ */
 @Document(collection = "messages")
 public class Message {
 
@@ -17,30 +22,25 @@ public class Message {
 
     @Id
     private LocalDateTime timeArrived;
-    private String module;
     private Direction direction;
+    @NotBlank
     private String topic;
-    private String unitID;
+    @NotNull
     private Map<String, String> payload;
-
-    public Message() {
-    }
 
     @Override
     public String toString() {
         return "Message{" +
                 "timeArrived=" + timeArrived +
-                ", module='" + module + '\'' +
                 ", direction=" + direction +
                 ", topic='" + topic + '\'' +
-                ", unitID='" + unitID + '\'' +
                 ", payload=" + payload +
                 '}';
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(timeArrived, module, direction, topic, unitID, payload);
+        return Objects.hash(timeArrived, direction, topic, payload);
     }
 
     @Override
@@ -49,10 +49,8 @@ public class Message {
         if (o == null || getClass() != o.getClass()) return false;
         Message message = (Message) o;
         return timeArrived.equals(message.timeArrived) &&
-                module.equals(message.module) &&
                 direction == message.direction &&
                 topic.equals(message.topic) &&
-                unitID.equals(message.unitID) &&
                 payload.equals(message.payload);
     }
 
@@ -62,15 +60,6 @@ public class Message {
 
     public Message setTimeArrived(LocalDateTime timeArrived) {
         this.timeArrived = timeArrived;
-        return this;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public Message setModule(String module) {
-        this.module = module;
         return this;
     }
 
@@ -89,15 +78,6 @@ public class Message {
 
     public Message setTopic(String topic) {
         this.topic = topic;
-        return this;
-    }
-
-    public String getUnitID() {
-        return unitID;
-    }
-
-    public Message setUnitID(String unitID) {
-        this.unitID = unitID;
         return this;
     }
 
