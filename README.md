@@ -1,7 +1,7 @@
 # IoT Server MQTT Client Service
 
 ## Service
-Part of the tlvlp IoT project's server side microservices.
+Part of the [tlvlp IoT project](https://github.com/tlvlp/iot-project-summary)'s server side microservices.
 
 This Dockerized SpringBoot-based service is responsible for the communication between 
 IoT units (via an MQTT broker) and the rest of the services.
@@ -19,36 +19,9 @@ and is recommended to be run with the docker/dockerTagsPush task.
 - This service is currently designed as **stateless** but still should only have one instance running per Docker Swarm Stack 
 since the Mosquitto MQTT broker is not set up to be able to load balance topic subscriptions between multiple clients.
 [VerneMQ](https://vernemq.com/) would be a good candidate for that scenario.
-- For settings and deployment details see the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment)
-
+- For settings and deployment details see the project's [deployment repository](https://github.com/tlvlp/iot-server-deployment)
 
 ## Server-side API
-Actual API endpoints are inherited from the project's [deployment repository](https://gitlab.com/tlvlp/iot.server.deployment) via environment variables.
+Actual API endpoints are inherited from the project's [deployment repository](https://github.com/tlvlp/iot-server-deployment) via environment variables.
 
-### POST Outgoing messages:
-
-##### Related environment variables:
-- ${MQTT_CLIENT_API_OUTGOING_MESSAGE}
-
-##### Input:
-- **topic**: String containing the targeted MQTT topic
-- **payload**: Map<String, String> of the payload to be sent to the subscribers of the topic
-
-```
-{
-    "topic": "/units/my_test_unitID/control",
-    "payload": 
-        {
-            "first": "value",
-            "second": "value"
-        }
-}
-```
-
-##### Output:
-Acknowledgement: Http response (202)
-
-
-## MQTT API
-
-The MQTT API is detailed in the project's [Unit service](https://gitlab.com/tlvlp/iot.server.unit.service).
+> API documentation has been temporarily removed!
