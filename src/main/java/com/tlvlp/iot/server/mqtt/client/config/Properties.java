@@ -39,7 +39,6 @@ public class Properties {
     private String API_GATEWAY_SECURITY_PASS_BACKEND;
 
 
-
     public String getMQTT_CLIENT_BROKER_URI() {
         return MQTT_CLIENT_BROKER_URI;
     }
