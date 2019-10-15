@@ -15,6 +15,9 @@ This project is using the [Palantir Docker Gradle plugin](https://github.com/pal
 All configuration can be found in the [Gradle build file](build.gradle) file 
 and is recommended to be run with the docker/dockerTagsPush task.
 
+## Dockerhub
+Repository: [tlvlp/iot-mqtt-client](https://cloud.docker.com/repository/docker/tlvlp/iot-mqtt-client)
+
 ## Deployment
 - This service is currently designed as **stateless** but still should only have one instance running per Docker Swarm Stack 
 since the Mosquitto MQTT broker is not set up to be able to load balance topic subscriptions between multiple clients.
