@@ -32,7 +32,7 @@ class SubscriptionServiceTest {
 
 
     @Test
-    @DisplayName("Subsribe to topics")
+    @DisplayName("Subscribe to topics")
     void subscribeToTopicsTest() throws MqttException {
         // given
         String topics = "topic_1, topic_2";
